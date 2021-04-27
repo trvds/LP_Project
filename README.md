@@ -1,2 +1,5 @@
 # LP_Project
-Resolvedor de puzzles Kakuro || Kakuro puzzle solver
+
+🇵🇹 - Projeto de Logica para Progamação, 2020/21.
+  
+🇬🇧 - Logic Programming project, 2020/21.

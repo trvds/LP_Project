@@ -67,12 +67,13 @@ espacos_fila(h, Fila, Espacos) :-
     bagof(Esp, Esp^espaco_fila(Fila, Esp, v), Espacos), !.
 
 espacos_fila(h, Fila, Espacos) :-
-    Espacos = [].
+    Espacos = [], !.
 
 espacos_fila(v, Fila, Espacos) :-
     bagof(Esp, Esp^espaco_fila(Fila, Esp, h), Espacos), !.
 
 espacos_fila(v, Fila, Espacos) :-
-    Espacos = [].
+    Espacos = [], !.
+
 
 

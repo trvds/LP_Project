@@ -76,4 +76,11 @@ espacos_fila(v, Fila, Espacos) :-
     Espacos = [], !.
 
 
-
+% espacos_puzzle(Puzzle, Espacos)
+espacos_puzzle(Puzzle, Espacos) :-
+    mat_transposta(Puzzle, Puzzle_T),
+    append(Puzzle, Puzzle_L),
+    append(Puzzle_T, Puzzle_LT),
+    espacos_fila(h, Puzzle_L, Esp),
+    espacos_fila(v, Puzzle_LT, Esp_T),
+    append(Esp, Esp_T, Espacos).

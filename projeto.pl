@@ -16,7 +16,7 @@ permutacoes_soma(N, Els, Soma, Perms) :-
 
 
 % espaco
-espaco(Soma, Variaveis).
+% espaco(Soma, Variaveis).
 
 % espaco_fila(Fila, Esp, H_V)
 espaco_fila(Fila, Esp, h) :-
@@ -84,3 +84,17 @@ espacos_puzzle(Puzzle, Espacos) :-
     espacos_fila(h, Puzzle_L, Esp),
     espacos_fila(v, Puzzle_LT, Esp_T),
     append(Esp, Esp_T, Espacos).
+
+
+% espacos_com_posicoes_comuns(Espacos, Esp, Esps_com)
+espacos_com_posicoes_comuns(Espacos, espaco(Soma, Variaveis), Esps_com) :-
+    bagof(espaco(Esp_Soma, Esp_Vars), 
+    (
+        member(espaco(Esp_Soma, Esp_Vars),Espacos),
+        member(Pos, Variaveis),
+        member(Pos, Esp_Vars)
+    )
+    , Esps_com_temp),
+    delete(Esps_com_temp, espaco(Soma, Variaveis), Esps_com), !.
+
+

@@ -1,6 +1,6 @@
 % Tiago Rodriges Vieira da Silva  99335
 
-:- [codigo_comum, puzzles_publicos].
+:- [codigo_comum].
 
 
 % combinacao_soma(N, Els, Soma, Combs)
@@ -19,7 +19,7 @@ permutacoes_soma(N, Els, Soma, Perms) :-
 % espaco(Soma, Variaveis).
 
 % espaco_fila(Fila, Esp, H_V)
-espaco_fila(Fila, Esp, h) :-
+espaco_fila(Fila, Esp, v) :-
     append([_, [Somas], Variaveis, [Prox_Soma], _], Fila),
     is_list(Somas),
     nth1(1, Somas, Soma),
@@ -28,7 +28,7 @@ espaco_fila(Fila, Esp, h) :-
     Variaveis \= [],   
     Esp = espaco(Soma, Variaveis).   
 
-espaco_fila(Fila, Esp, h) :-
+espaco_fila(Fila, Esp, v) :-
     append([_, [Somas], Variaveis], Fila),
     is_list(Somas),
     nth1(1, Somas, Soma),
@@ -36,7 +36,7 @@ espaco_fila(Fila, Esp, h) :-
     Variaveis \= [],   
     Esp = espaco(Soma, Variaveis).   
 
-espaco_fila(Fila, Esp, v) :-
+espaco_fila(Fila, Esp, h) :-
     append([_, [Somas], Variaveis, [Prox_Soma], _], Fila),
     is_list(Somas),
     nth1(2, Somas, Soma),
@@ -45,7 +45,7 @@ espaco_fila(Fila, Esp, v) :-
     Variaveis \= [],   
     Esp = espaco(Soma, Variaveis).   
 
-espaco_fila(Fila, Esp, v) :-
+espaco_fila(Fila, Esp, h) :-
     append([_, [Somas], Variaveis], Fila),
     is_list(Somas),
     nth1(2, Somas, Soma),
@@ -63,16 +63,16 @@ nao_tem_lista([X|R]) :-
 
 
 %espacos_fila(H_V, Fila, Espacos)
-espacos_fila(h, Fila, Espacos) :-
+espacos_fila(v, Fila, Espacos) :-
     bagof(Esp, Esp^espaco_fila(Fila, Esp, v), Espacos), !.
 
-espacos_fila(h, _ , Espacos) :-
+espacos_fila(v, _ , Espacos) :-
     Espacos = [], !.
 
-espacos_fila(v, Fila, Espacos) :-
+espacos_fila(h, Fila, Espacos) :-
     bagof(Esp, Esp^espaco_fila(Fila, Esp, h), Espacos), !.
 
-espacos_fila(v, _ , Espacos) :-
+espacos_fila(h, _ , Espacos) :-
     Espacos = [], !.
 
 
@@ -113,7 +113,7 @@ posicao_comum(Var, [ _ |R]) :-
     posicao_comum(Var, R).
 
 
-% verifica que um elemento é membro sem unificar
+% verifica que um elemento e membro sem unificar
 % (baseado no enunciado das aulas da Prof. Remedios)
 membro(E, [P| _ ]) :- E == P.
 membro(E, [_ | R]) :- membro(E, R).

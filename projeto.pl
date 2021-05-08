@@ -1,10 +1,10 @@
 % Tiago Rodriges Vieira da Silva  99335
 
-:- [codigo_comum].
+:- [codigo_comum, puzzles_publicos].
 
 
 % combinacao_soma(N, Els, Soma, Combs)
-combinacoes_soma(N, Els, Soma, Combs) :-
+combinacao_soma(N, Els, Soma, Combs) :-
     findall(Comb, (combinacao(N, Els, Comb), sum_list(Comb, Sum), Sum == Soma), Combs).
 
 
@@ -120,9 +120,14 @@ membro(E, [_ | R]) :- membro(E, R).
 
 
 % permutacoes_soma_espacos(Espacos, Perms_soma)
-permutacoes_soma_espacos([Espaco|Espacos], [Perms_soma) :-
-    
-    permutacoes_soma(N, Els, Soma, Perms)
+permutacoes_soma_espacos( _ , []).
 
 
+permutacoes_soma_espacos([Espaco|Espacos], [Perm|Perms]) :-
+    Perm = [Espaco, Permutacao],
+    Els = [1,2,3,4,5,6,7,8,9],
+    Espaco = espaco(Soma, Variaveis),
+    length(Variaveis, N),
+    permutacoes_soma(N, Els, Soma, Permutacao),
+    permutacoes_soma_espacos(Espacos, Perms).
 

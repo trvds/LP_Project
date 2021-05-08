@@ -1,6 +1,6 @@
 % Tiago Rodriges Vieira da Silva  99335
 
-:- [codigo_comum, puzzles_publicos].
+:- [codigo_comum].
 
 
 % combinacao_soma(N, Els, Soma, Combs)
@@ -66,13 +66,13 @@ nao_tem_lista([X|R]) :-
 espacos_fila(h, Fila, Espacos) :-
     bagof(Esp, Esp^espaco_fila(Fila, Esp, v), Espacos), !.
 
-espacos_fila(h, Fila, Espacos) :-
+espacos_fila(h, _ , Espacos) :-
     Espacos = [], !.
 
 espacos_fila(v, Fila, Espacos) :-
     bagof(Esp, Esp^espaco_fila(Fila, Esp, h), Espacos), !.
 
-espacos_fila(v, Fila, Espacos) :-
+espacos_fila(v, _ , Espacos) :-
     Espacos = [], !.
 
 
@@ -87,14 +87,42 @@ espacos_puzzle(Puzzle, Espacos) :-
 
 
 % espacos_com_posicoes_comuns(Espacos, Esp, Esps_com)
-espacos_com_posicoes_comuns(Espacos, espaco(Soma, Variaveis), Esps_com) :-
-    bagof(espaco(Esp_Soma, Esp_Vars), 
-    (
-        member(espaco(Esp_Soma, Esp_Vars),Espacos),
-        member(Pos, Variaveis),
-        member(Pos, Esp_Vars)
-    )
-    , Esps_com_temp),
-    delete(Esps_com_temp, espaco(Soma, Variaveis), Esps_com), !.
+espacos_com_posicoes_comuns([], _ , []) :- !.
+
+espacos_com_posicoes_comuns([Espaco | R], Esp1, [Espaco| Q]) :-
+    espaco_posicao_comum(Esp1, Espaco),
+    Esp1 \== Espaco,
+    espacos_com_posicoes_comuns(R, Esp1, Q), !.
+
+espacos_com_posicoes_comuns([ _ | R], Esp1, Q) :-
+    espacos_com_posicoes_comuns(R, Esp1, Q), !.
+
+espaco_posicao_comum(Esp1, Espaco) :-
+    Espaco = espaco( _ , Esp_Vars),
+    Esp1 = espaco( _ , Variaveis),
+    posicao_comum(Esp_Vars, Variaveis).
+
+
+% posicao_comum(Var, Variaveis)
+posicao_comum( _ , []) :- false.
+
+posicao_comum(Var, [Pos| _ ]) :-
+    membro(Pos, Var), !.
+
+posicao_comum(Var, [ _ |R]) :-
+    posicao_comum(Var, R).
+
+
+% verifica que um elemento é membro sem unificar
+% (baseado no enunciado das aulas da Prof. Remedios)
+membro(E, [P| _ ]) :- E == P.
+membro(E, [_ | R]) :- membro(E, R).
+
+
+% permutacoes_soma_espacos(Espacos, Perms_soma)
+permutacoes_soma_espacos([Espaco|Espacos], [Perms_soma) :-
+    
+    permutacoes_soma(N, Els, Soma, Perms)
+
 
 

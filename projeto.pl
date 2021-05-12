@@ -237,3 +237,10 @@ simplifica(Perms_Possiveis, Novas_Perms_Possiveis) :-
     retira_impossiveis(Perms_Possiveis, Temp_Perms_Possiveis),
     simplifica(Temp_Perms_Possiveis, Novas_Perms_Possiveis).
 
+
+% inicializa(Puzzle, Perms_Possiveis)
+inicializa(Puzzle, Perms_Possiveis) :-
+    espacos_puzzle(Puzzle, Espacos),
+    permutacoes_possiveis_espacos(Espacos, Perms_poss_esps),
+    simplifica(Perms_poss_esps, Perms_Possiveis).
+

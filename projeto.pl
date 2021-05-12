@@ -1,6 +1,6 @@
 % Tiago Rodriges Vieira da Silva  99335
 
-:- [codigo_comum].
+:- [codigo_comum, puzzles_publicos].
 
 
 % combinacoes_soma(N, Els, Soma, Combs)
@@ -202,3 +202,25 @@ unificar([Par|R], Vars) :-
     Par = (Index, N),
     nth1(Index, Vars, N),
     unificar(R, Vars).
+
+
+% retira_impossiveis(Perms_Possiveis, Novas_Perms_Possiveis)
+retira_impossiveis([], []).
+
+retira_impossiveis([Esp_Perm|R], [Novo_Esp_Perm|Q]) :-
+    Esp_Perm = [Vars, Perm],
+    include(check_comuns(Vars), Perm, Novo_Perm),
+    Novo_Esp_Perm = [Vars, Novo_Perm],
+    retira_impossiveis(R, Q).
+
+
+check_comuns([], _).
+
+check_comuns([Var|R], [Elem_Perm|Q]) :-
+    Var == Elem_Perm,
+    check_comuns(R, Q).
+
+check_comuns([Var|R], [ _ |Q]) :-
+    var(Var),
+    check_comuns(R, Q).
+

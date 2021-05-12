@@ -3,14 +3,14 @@
 :- [codigo_comum].
 
 
-% combinacao_soma(N, Els, Soma, Combs)
-combinacao_soma(N, Els, Soma, Combs) :-
+% combinacoes_soma(N, Els, Soma, Combs)
+combinacoes_soma(N, Els, Soma, Combs) :-
     findall(Comb, (combinacao(N, Els, Comb), sum_list(Comb, Sum), Sum == Soma), Combs).
 
 
 % permutacoes_soma(N, Els, Soma, Perms)
 permutacoes_soma(N, Els, Soma, Perms) :-
-    combinacao_soma(N, Els, Soma, Combs),
+    combinacoes_soma(N, Els, Soma, Combs),
     findall(Perm, (combinacao(N, Els, Comb), member(Comb, Combs), permutation(Comb, Perm)) , Unsorted_Perms),
     sort(Unsorted_Perms, Perms).
 
@@ -131,3 +131,74 @@ permutacoes_soma_espacos([Espaco|Espacos], [Perm|Perms]) :-
     permutacoes_soma(N, Els, Soma, Permutacao),
     permutacoes_soma_espacos(Espacos, Perms).
 
+
+% permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma)
+permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma) :-
+    espacos_com_posicoes_comuns(Espacos, Esp, Esps_coms),
+    bagof(Perm_Esp, Esp^(member(PS_Esp, Perms_soma), PS_Esp = [Esp , Perm_Esp]), [Perm_Esp]),
+    member(Perm, Perm_Esp),
+    bagof(Index, Esp_com^(member(Esp_com, Esps_coms), nth1(Index, Esps_coms, Esp_com)), Indexes),
+    forall(member(Index, Indexes),
+    (
+        nth1(Index, Esps_coms, Esp_com),
+        nth1(Index, Perm, N),
+        member(PS, Perms_soma),
+        PS = [Esp_com, Perm_PS],
+        append(Perm_PS, Var_com),
+        member(N, Var_com)
+    )).
+
+
+% permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp, Perms_poss)
+permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp, Perms_poss) :-
+    bagof(Perm, permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma), Temp),
+    list_to_set(Temp, Temp2),
+    Esp = espaco( _ , Vars),
+    Perms_poss = [Vars, Temp2].
+
+
+% permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
+permutacoes_possiveis_espacos(Espacos, Perms_poss_esps) :-
+    permutacoes_soma_espacos(Espacos, Perms_soma),
+    maplist(permutacoes_possiveis_espaco(Espacos, Perms_soma),Espacos,Perms_poss_esps). 
+
+
+% numeros_comuns(Lst_Perms, Numeros_comuns)
+numeros_comuns(Lst_Perms, Numeros_comuns) :-
+    nth1(1, Lst_Perms, Perm1),
+    findall(Par,(
+        member(N, Perm1),
+        nth1(Index, Perm1, N),
+        Par = (Index, N)
+    ), Numeros_Temp),
+    list_to_set(Numeros_Temp, Numeros),
+    aux_numeros_comuns(Lst_Perms, Numeros, Numeros_comuns). 
+
+
+aux_numeros_comuns([], Numeros, Numeros).
+
+aux_numeros_comuns([Perm|R], Numeros, Numeros_comuns) :-
+    include(condicao(Perm) , Numeros, Numeros1),
+    aux_numeros_comuns(R, Numeros1, Numeros_comuns).
+
+condicao(Perm, Par) :-
+    Par = (Index, N),
+    nth1(Index, Perm, N).
+
+
+% atribui_comuns(Perms_Possiveis)
+atribui_comuns([]).
+
+atribui_comuns([Perms_Possivel|R]) :-
+    nth1(1, Perms_Possivel, Vars),
+    nth1(2, Perms_Possivel, Perms),
+    numeros_comuns(Perms, Nums_com),
+    unificar(Nums_com, Vars),
+    atribui_comuns(R).
+
+unificar([], _).
+
+unificar([Par|R], Vars) :-
+    Par = (Index, N),
+    nth1(Index, Vars, N),
+    unificar(R, Vars).

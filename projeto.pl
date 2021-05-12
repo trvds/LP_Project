@@ -1,6 +1,6 @@
-% Tiago Rodriges Vieira da Silva  99335
+% Tiago Rodrigues Vieira da Silva  99335
 
-:- [codigo_comum, puzzles_publicos].
+:- [codigo_comum].
 
 
 % combinacoes_soma(N, Els, Soma, Combs)
@@ -223,4 +223,17 @@ check_comuns([Var|R], [Elem_Perm|Q]) :-
 check_comuns([Var|R], [ _ |Q]) :-
     var(Var),
     check_comuns(R, Q).
+
+
+% simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+simplifica(Perms_Possiveis, Novas_Perms_Possiveis) :-
+    atribui_comuns(Perms_Possiveis),
+    retira_impossiveis(Perms_Possiveis, Temp_Perms_Possiveis),
+    Perms_Possiveis == Temp_Perms_Possiveis,
+    Novas_Perms_Possiveis = Temp_Perms_Possiveis.
+
+simplifica(Perms_Possiveis, Novas_Perms_Possiveis) :-
+    atribui_comuns(Perms_Possiveis),
+    retira_impossiveis(Perms_Possiveis, Temp_Perms_Possiveis),
+    simplifica(Temp_Perms_Possiveis, Novas_Perms_Possiveis).
 

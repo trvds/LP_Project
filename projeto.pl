@@ -1,6 +1,6 @@
 % Tiago Rodrigues Vieira da Silva  99335
 
-:- [codigo_comum, puzzles_publicos].
+:- [codigo_comum].
 
 
 % combinacoes_soma(N, Els, Soma, Combs)
@@ -261,4 +261,18 @@ experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis) :-
     Tentativa = [Esp, [Perm]],
     select(Escolha, Perms_Possiveis, Tentativa, Novas_Perms_Possiveis).
     
+
+% resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
+resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis) :-
+    \+ escolhe_menos_alternativas(Perms_Possiveis, Escolha),
+    Perms_Possiveis = Novas_Perms_Possiveis.
+
+resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis) :-
+    escolhe_menos_alternativas(Perms_Possiveis, Escolha),
+    experimenta_perm(Escolha, Perms_Possiveis, Temp),
+    simplifica(Temp, Temp2),
+    resolve_aux(Temp2, Novas_Perms_Possiveis).
+
+
+
 

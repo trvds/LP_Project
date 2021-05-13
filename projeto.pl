@@ -264,7 +264,7 @@ experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis) :-
 
 % resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
 resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis) :-
-    \+ escolhe_menos_alternativas(Perms_Possiveis, Escolha),
+    \+ escolhe_menos_alternativas(Perms_Possiveis, _ ),
     Perms_Possiveis = Novas_Perms_Possiveis.
 
 resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis) :-
@@ -274,5 +274,8 @@ resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis) :-
     resolve_aux(Temp2, Novas_Perms_Possiveis).
 
 
-
+% resolve(Puz)
+resolve(Puz) :-
+    inicializa(Puz, Perms_Possiveis),
+    resolve_aux(Perms_Possiveis, _ ).
 

@@ -247,10 +247,20 @@ inicializa(Puzzle, Perms_Possiveis) :-
 
 % escolhe_menos_alternativas(Perms_Possiveis, Escolha)
 escolhe_menos_alternativas(Perms_Possiveis, Escolha) :-
-    member(Escolha, Perms_Possiveis),
-    Escolha = [ _ , Perms],
-    length(Perms, L),
-    L > 1, !.
+    findall(L, 
+    (
+        member(Perm, Perms_Possiveis),
+        Perm = [ _ , Perms],
+        length(Perms, L)
+    ),
+    Lengths),
+    exclude(=(1), Lengths, Lengths2),
+    Lengths2 \== [],
+    min_list(Lengths2, L),
+    nth1(Index,Lengths, L),
+    nth1(Index, Perms_Possiveis, Escolha), !.
+
+
 
 
 % experimenta_perm(Escolha, Perms_Possiveis,Novas_Perms_Possiveis)

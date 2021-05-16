@@ -178,17 +178,17 @@ permutacoes_soma_espacos([Espaco|Espacos], [Perm|Perms]) :-
 %===============================================================================
 permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma) :-
     espacos_com_posicoes_comuns(Espacos, Esp, Esps_coms),
+    bagof(Index,
+    Esp_com^(
+        member(Esp_com, Esps_coms),
+        nth1(Index, Esps_coms, Esp_com)
+    ), Indexes),
     bagof(Perm_Esp, 
     Esp^(
         member(PS_Esp, Perms_soma),
         PS_Esp = [Esp , Perm_Esp]
     ), [Perm_Esp]),
     member(Perm, Perm_Esp),
-    bagof(Index,
-    Esp_com^(
-        member(Esp_com, Esps_coms),
-        nth1(Index, Esps_coms, Esp_com)
-    ), Indexes),
     forall(member(Index, Indexes),
     (
         nth1(Index, Esps_coms, Esp_com),

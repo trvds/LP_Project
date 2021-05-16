@@ -5,6 +5,10 @@
 
 %===============================================================================
 % combinacoes_soma(N, Els, Soma, Combs)
+% N eh um inteiro, Els eh uma lista de inteiros, Soma eh um inteiro.
+% Combs eh a lista ordenada cujos elementos sao as combinacoes N a N, dos 
+% elementos de Els cuja soma eh Soma.
+%===============================================================================
 combinacoes_soma(N, Els, Soma, Combs) :-
     findall(Comb, 
     (   
@@ -15,6 +19,10 @@ combinacoes_soma(N, Els, Soma, Combs) :-
 
 %===============================================================================
 % permutacoes_soma(N, Els, Soma, Perms)
+% N eh um inteiro, Els eh uma lista de inteiros, Soma eh um inteiro.
+% Perms eh a lista ordenada cujos elementos sao as permutacoes das combinacoes
+% N a N, dos elementos de Els cuja soma eh Soma.
+%===============================================================================
 permutacoes_soma(N, Els, Soma, Perms) :-
     combinacoes_soma(N, Els, Soma, Combs),
     findall(Perm,
@@ -28,6 +36,10 @@ permutacoes_soma(N, Els, Soma, Perms) :-
 
 %===============================================================================
 % espaco_fila(Fila, Esp, H_V)
+% Fila eh uma fila (linha ou coluna) de um puzzle, H_V eh um dos atomos h ou v, 
+% conforme se trate de uma fila horizontal ou vertical, respectivamente.
+% Esp eh um espaco de Fila.
+%===============================================================================
 espaco_fila(Fila, Esp, v) :- aux_espaco_fila(Fila, Esp, 1).
 espaco_fila(Fila, Esp, h) :- aux_espaco_fila(Fila, Esp, 2).
 
@@ -48,8 +60,10 @@ aux_espaco_fila(Fila, Esp, Index) :-
     Variaveis \= [],   
     Esp = espaco(Soma, Variaveis).   
 
-
-% nao_tem_listas(Lista)
+%===============================================================================
+% nao_tem_listas(Lst)
+% Lst eh uma lista que nao possui nenhuma lista nos seus elementos
+%===============================================================================
 nao_tem_lista([]).
 
 nao_tem_lista([X|R]) :-
@@ -58,7 +72,10 @@ nao_tem_lista([X|R]) :-
 
 
 %===============================================================================
-%espacos_fila(H_V, Fila, Espacos)
+% espacos_fila(H_V, Fila, Espacos)
+% Fila eh uma fila (linha ou coluna) de uma grelha e H_V eh um dos atomos h ou v
+% Espacos eh a lista de todos os espacos de Fila, da esquerda para a direita.
+%===============================================================================
 espacos_fila(v, Fila, Espacos) :-
     bagof(Esp, Esp^espaco_fila(Fila, Esp, v), Espacos), !.
 
@@ -74,6 +91,9 @@ espacos_fila(h, _ , Espacos) :-
 
 %===============================================================================
 % espacos_puzzle(Puzzle, Espacos)
+% Puzzle eh um puzzle.
+% Espacos eh a lista de espacos de Puzzle.
+%===============================================================================
 espacos_puzzle(Puzzle, Espacos) :-
     mat_transposta(Puzzle, Puzzle_T),
     append(Puzzle, Puzzle_L),
@@ -85,6 +105,9 @@ espacos_puzzle(Puzzle, Espacos) :-
 
 %===============================================================================
 % espacos_com_posicoes_comuns(Espacos, Esp, Esps_com)
+% Espacos eh uma lista de espacos e Esp eh um espaco.
+% Esps_com eh a lista de espacos com variaveis em comum com Esp.
+%===============================================================================
 espacos_com_posicoes_comuns([], _ , []) :- !.
 
 espacos_com_posicoes_comuns([Espaco|R], Esp1, [Espaco|Q]) :-
@@ -95,31 +118,47 @@ espacos_com_posicoes_comuns([Espaco|R], Esp1, [Espaco|Q]) :-
 espacos_com_posicoes_comuns([ _ |R], Esp1, Q) :-
     espacos_com_posicoes_comuns(R, Esp1, Q), !.
 
-espaco_posicao_comum(Esp1, Espaco) :-
-    Espaco = espaco( _ , Esp_Vars),
-    Esp1 = espaco( _ , Variaveis),
-    posicao_comum(Esp_Vars, Variaveis).
+
+%===============================================================================
+% espaco_posicao_comum(Esp1, Esp2)
+% [predicado auxiliar de espacos_com_posicoes_comuns/3]
+% Esp1 e Esp2 sao ambos espacos com pelo menos uma posicao(variavel) em comum.
+%===============================================================================
+espaco_posicao_comum(Esp1, Esp2) :-
+    Esp2 = espaco( _ , Vars2),
+    Esp1 = espaco( _ , Vars1),
+    posicao_comum(Vars2, Vars1).
 
 
 %===============================================================================
-% posicao_comum(Var, Variaveis)
+% posicao_comum(Vars2, Vars1)
+% [predicado auxiliar de espaco_posicao_comum/2]
+% Vars2 e Vars1 sao listas com pelo menos uma posicao(variavel) em comum.
+%===============================================================================
 posicao_comum( _ , []) :- false.
 
-posicao_comum(Var, [Pos| _ ]) :-
-    membro(Pos, Var), !.
+posicao_comum(Vars, [Pos| _ ]) :-
+    membro(Pos, Vars), !.
 
-posicao_comum(Var, [ _ |R]) :-
-    posicao_comum(Var, R).
+posicao_comum(Vars, [ _ |R]) :-
+    posicao_comum(Vars, R).
 
 
 %===============================================================================
-% verifica que um elemento e membro sem unificar
+% membro(Elem, Lista)
+% verifica que Elem esta na lista Lst sem unificar
 % (baseado no enunciado das aulas da Prof. Remedios)
+%===============================================================================
 membro(E, [P| _ ]) :- E == P.
 membro(E, [_ | R]) :- membro(E, R).
 
 %===============================================================================
 % permutacoes_soma_espacos(Espacos, Perms_soma)
+% Espacos eh uma lista de espacos.
+% Perms_soma eh a lista de listas de 2 elementos, em que o 1o elemento eh um 
+% espaco de Espacos e o 2o eh a lista ordenada de permutacoes cuja soma eh igual
+% ah soma do espaco.
+%===============================================================================
 permutacoes_soma_espacos( _ , []).
 
 permutacoes_soma_espacos([Espaco|Espacos], [Perm|Perms]) :-
@@ -133,6 +172,10 @@ permutacoes_soma_espacos([Espaco|Espacos], [Perm|Perms]) :-
 
 %===============================================================================
 % permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma)
+% Perm eh uma permutacao, Esp eh um espaco, Espacos eh uma lista  de  espacos e 
+% Perms_soma eh uma lista de listas tal como obtida pelo predicado anterior.
+% Perm eh uma permutacao possivel para o espaco Esp.
+%===============================================================================
 permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma) :-
     espacos_com_posicoes_comuns(Espacos, Esp, Esps_coms),
     bagof(Perm_Esp, 
@@ -159,8 +202,17 @@ permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma) :-
 
 %===============================================================================
 % permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp, Perms_poss)
+% Espacos eh uma lista de espacos, Perms_soma eh uma lista de listas tal como 
+% obtida pelo predicado permutacoes_soma_espacos, e Esp eh um espaco.
+% Perms_poss eh uma lista de 2 elementos no seguinte formato: 
+% [[variaveis de Esp], [lista de permutacoes possiveis para Esp]].
+%===============================================================================
 permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp, Perms_poss) :-
-    bagof(Perm, permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma), Temp),
+    bagof(
+        Perm,
+        permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma),
+        Temp
+    ),
     list_to_set(Temp, Temp2),
     Esp = espaco( _ , Vars),
     Perms_poss = [Vars, Temp2].
@@ -168,13 +220,24 @@ permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp, Perms_poss) :-
 
 %===============================================================================
 % permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
+% Espacos eh uma lista de espacos.
+% Perms_poss_esps eh a lista de permutacoes possiveis.
+%===============================================================================
 permutacoes_possiveis_espacos(Espacos, Perms_poss_esps) :-
     permutacoes_soma_espacos(Espacos, Perms_soma),
-    maplist(permutacoes_possiveis_espaco(Espacos, Perms_soma), Espacos, Perms_poss_esps). 
+    maplist(
+        permutacoes_possiveis_espaco(Espacos, Perms_soma), 
+        Espacos, 
+        Perms_poss_esps
+    ). 
 
 
 %===============================================================================
 % numeros_comuns(Lst_Perms, Numeros_comuns)
+% Lst_Perms eh uma lista de permutacoes.
+% Numeros_comuns eh uma lista de pares (pos, numero), significando que todas as
+% listas de Lst_Perms conteem o numero "numero" na posicao "pos".
+%===============================================================================
 numeros_comuns(Lst_Perms, Numeros_comuns) :-
     nth1(1, Lst_Perms, Perm1),
     findall(Par,(
@@ -186,19 +249,39 @@ numeros_comuns(Lst_Perms, Numeros_comuns) :-
     aux_numeros_comuns(Lst_Perms, Numeros, Numeros_comuns). 
 
 
+%===============================================================================
+% aux_numeros_comuns(Lst_Perms, Numeros, Numeros_comuns)
+% [predicado auxiliar de numeros_comuns/2]
+% Lst_Perms eh uma lista de permutacoes, Numeros eh uma lista de pares
+% (pos, numero) comuns do primeiro elemento de Lst_Perms.
+% Numeros eh uma lista de pares (pos, numero) comuns a todas as permutacoes de
+% Lst_Perms
+%===============================================================================
 aux_numeros_comuns([], Numeros, Numeros).
 
 aux_numeros_comuns([Perm|R], Numeros, Numeros_comuns) :-
-    include(condicao(Perm) , Numeros, Numeros1),
+    include(condicao_comuns(Perm) , Numeros, Numeros1),
     aux_numeros_comuns(R, Numeros1, Numeros_comuns).
 
-condicao(Perm, Par) :-
+
+%===============================================================================
+% condicao_comuns(Perm, Par)
+% [predicado auxiliar de aux_numeros_comuns/2]
+% Perm eh uma lista de numeros que equivale a uma permutacao.
+% Par e um par (numero, pos) em que o numero "numero" esta na posicao "pos"
+% na lista Perm.
+%===============================================================================
+condicao_comuns(Perm, Par) :-
     Par = (Index, N),
     nth1(Index, Perm, N).
 
 
 %===============================================================================
 % atribui_comuns(Perms_Possiveis)
+% Perms_Possiveis eh uma lista de permutacoes possiveis.
+% O predicado actualiza esta lista atribuindo a cada espaco numeros comuns a 
+% todas as permutacoes possiveis para esse espaco.
+%===============================================================================
 atribui_comuns([]).
 
 atribui_comuns([Perms_Possivel|R]) :-
@@ -208,6 +291,12 @@ atribui_comuns([Perms_Possivel|R]) :-
     unificar(Nums_com, Vars),
     atribui_comuns(R).
 
+%===============================================================================
+% unificar(Nums_com, Vars)
+% [predicado auxiliar de atribui_comuns/1]
+% Nums_com eh uma lista de pares(pos, numero) e Vars eh uma lista de variaveis.
+% Unifica cada variavel na posicao pos com o numero correspondente.
+%===============================================================================
 unificar([], _).
 
 unificar([Par|R], Vars) :-
@@ -218,6 +307,10 @@ unificar([Par|R], Vars) :-
 
 %===============================================================================
 % retira_impossiveis(Perms_Possiveis, Novas_Perms_Possiveis)
+% Perms_Possiveis eh uma lista de permutacoes possiveis.
+% Novas_Perms_Possiveis eh o resultado de tirar permutacoes impossiveis de
+% Perms_Possiveis
+%===============================================================================
 retira_impossiveis([], []).
 
 retira_impossiveis([Esp_Perm|R], [Novo_Esp_Perm|Q]) :-
@@ -226,7 +319,12 @@ retira_impossiveis([Esp_Perm|R], [Novo_Esp_Perm|Q]) :-
     Novo_Esp_Perm = [Vars, Novo_Perm],
     retira_impossiveis(R, Q).
 
-
+%===============================================================================
+% check_comuns(Vars, Perm)
+% [predicado auxiliar de retira_impossiveis/2] 
+% Vars eh uma lista de variaveis e Perm eh uma permutacao
+% O predicado verifica se a permutacao e possivel para a lista de variaveis.
+%===============================================================================
 check_comuns([], _).
 
 check_comuns([Var|R], [Elem_Perm|Q]) :-
@@ -240,6 +338,9 @@ check_comuns([Var|R], [ _ |Q]) :-
 
 %===============================================================================
 % simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+% Perms_Possiveis eh uma lista de permutacoes possiveis.
+% Novas_Perms_Possiveis eh o resultado de simplificar Perms_Possiveis.
+%===============================================================================
 simplifica(Perms_Possiveis, Novas_Perms_Possiveis) :-
     atribui_comuns(Perms_Possiveis),
     retira_impossiveis(Perms_Possiveis, Temp_Perms_Possiveis),
@@ -254,6 +355,9 @@ simplifica(Perms_Possiveis, Novas_Perms_Possiveis) :-
 
 %===============================================================================
 % inicializa(Puzzle, Perms_Possiveis)
+% Puzzle eh um puzzle.
+% Perms_Possiveis eh a lista de permutacoes possiveis simplificada para Puzzle.
+%===============================================================================
 inicializa(Puzzle, Perms_Possiveis) :-
     espacos_puzzle(Puzzle, Espacos),
     permutacoes_possiveis_espacos(Espacos, Perms_poss_esps),
@@ -262,6 +366,10 @@ inicializa(Puzzle, Perms_Possiveis) :-
 
 %===============================================================================
 % escolhe_menos_alternativas(Perms_Possiveis, Escolha)
+% Perms_Possiveis eh uma lista de permutacoes possiveis.
+% Escolha eh o primeiro elemento de Perms_Possiveis com mais do que um elemento.
+% Devolve "false" se nao houver nenhum elemento maior que um em Perms_Possiveis.
+%===============================================================================
 escolhe_menos_alternativas(Perms_Possiveis, Escolha) :-
     findall(L, 
     (
@@ -279,6 +387,12 @@ escolhe_menos_alternativas(Perms_Possiveis, Escolha) :-
 
 %===============================================================================
 % experimenta_perm(Escolha, Perms_Possiveis,Novas_Perms_Possiveis)
+% Perms_Possiveis eh uma lista de permutacoes possiveis, Escolha eh um dos seus 
+% elementos.
+% Novas_Perms_Possiveis eh o resultado de substituir em Perms_Possiveis o
+% elemento Escolha pelo elemento [Esp, [Perm]].
+% (Esp e o espaco de Escolha, Perm e uma das Permutacoes de Escolha)
+%===============================================================================
 experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis) :-
     Escolha = [Esp, Lst_Perms],
     member(Perm, Lst_Perms),
@@ -289,6 +403,13 @@ experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis) :-
 
 %===============================================================================
 % resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
+% Perms_Possiveis eh uma lista de permutacoes possiveis.
+% Novas_Perms_Possiveis eh o resultado de aplicar os predicados:
+%   -escolhe_menos_alternativas/2
+%   -experimenta_perm/2
+%   -simplifica/2
+% repetidamente ate que a repeticao ja nao altere nada.
+%===============================================================================
 resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis) :-
     \+ escolhe_menos_alternativas(Perms_Possiveis, _ ),
     Perms_Possiveis = Novas_Perms_Possiveis.
@@ -302,6 +423,9 @@ resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis) :-
 
 %===============================================================================
 % resolve(Puz)
+% Puz eh um puzzle.
+% O predicado resolve Puzz.
+%===============================================================================
 resolve(Puz) :-
     inicializa(Puz, Perms_Possiveis),
     resolve_aux(Perms_Possiveis, _ ).

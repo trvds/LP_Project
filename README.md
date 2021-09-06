@@ -1,4 +1,4 @@
-# LP_Project
+# kakuro-solver
 
 🇵🇹 - Projeto de Lógica para Programação, 2020/21.
   
